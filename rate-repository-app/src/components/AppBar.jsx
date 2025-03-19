@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.appBar,
   },
   text: {
-    color: theme.colors.white,
+    color: theme.colors.textPrimary,
     fontSize: theme.fontSizes.subheading,
     fontWeight: theme.fontWeights.bold,
     padding: 20,
