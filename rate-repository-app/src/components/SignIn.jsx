@@ -43,12 +43,14 @@ const SignIn = () => {
   return (
     <View style={styles.container}>
       <TextInput
+        secureTextEntry
         style={styles.input}
         placeholder="Username"
         value={formik.values.username}
         onChangeText={formik.handleChange("username")}
       />
       <TextInput
+        secureTextEntry
         style={styles.input}
         placeholder="Password"
         value={formik.values.password}
