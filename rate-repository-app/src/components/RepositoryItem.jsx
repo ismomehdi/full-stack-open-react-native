@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   chip: {
-    backgroundColor: theme.colors.chip,
+    backgroundColor: theme.colors.primary,
     padding: 5,
     alignSelf: "flex-start",
     borderRadius: 5,
