@@ -1,5 +1,6 @@
 import Constants from "expo-constants";
 import { Pressable, StyleSheet, View } from "react-native";
+import { Link } from "react-router-native";
 import theme from "../theme";
 import Text from "./Text";
 
@@ -7,26 +8,33 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: Constants.statusBarHeight,
     backgroundColor: theme.colors.appBar,
+    display: "flex",
+    flexDirection: "row",
   },
   text: {
     color: theme.colors.textPrimary,
     fontSize: theme.fontSizes.subheading,
-    fontWeight: theme.fontWeights.bold,
     padding: 20,
+  },
+  link: {
+    backgroundColor: theme.colors.appBar,
   },
 });
 
 const AppBar = () => {
   return (
     <View style={styles.container}>
-      <Tab />
+      <Tab link="/" title="Repositories" />
+      <Tab link="/signin" title="Sign in" />
     </View>
   );
 };
 
-const Tab = () => (
+const Tab = ({ link, title }) => (
   <Pressable>
-    <Text style={styles.text}>Repositories</Text>
+    <Link to={link} style={styles.link} underlayColor="transparent">
+      <Text style={styles.text}>{title}</Text>
+    </Link>
   </Pressable>
 );
 
