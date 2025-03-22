@@ -1,5 +1,6 @@
 import React from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
+import { useNavigate } from "react-router-native";
 import theme from "../theme";
 import Text from "./Text";
 
@@ -43,6 +44,7 @@ const styles = StyleSheet.create({
 
 const RepositoryItem = (item) => {
   const {
+    id,
     fullName,
     description,
     language,
@@ -52,8 +54,13 @@ const RepositoryItem = (item) => {
     reviewCount,
     ownerAvatarUrl,
   } = item.item;
+  const navigate = useNavigate();
   return (
-    <View testID="repositoryItem" style={styles.container}>
+    <Pressable
+      onPress={() => navigate(`/repository/${id}`)}
+      testID="repositoryItem"
+      style={styles.container}
+    >
       <View style={styles.top}>
         <Image source={{ uri: ownerAvatarUrl }} style={styles.image} />
         <View style={styles.topTextContainer}>
@@ -70,7 +77,7 @@ const RepositoryItem = (item) => {
         <InfoItem title="Reviews" value={formatCount(reviewCount)} />
         <InfoItem title="Rating" value={ratingAverage} />
       </View>
-    </View>
+    </Pressable>
   );
 };
 
