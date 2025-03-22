@@ -19,7 +19,12 @@ const ItemSeparator = () => <View style={styles.separator} />;
 
 const RepositoryList = () => {
   const { repositories, loading } = useRepositories();
+  return (
+    <RepositoryListContainer repositories={repositories} loading={loading} />
+  );
+};
 
+export const RepositoryListContainer = ({ repositories, loading }) => {
   if (loading) return <Text>Loading...</Text>;
 
   // Get the nodes from the edges array
