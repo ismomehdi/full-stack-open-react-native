@@ -19,6 +19,15 @@ export const GET_REPOSITORIES = gql`
   }
 `;
 
+export const GET_AUTHORIZED_USER = gql`
+  query Me {
+    me {
+      id
+      username
+    }
+  }
+`;
+
 // USAGE EXAMPLE
 //
 // import { useQuery } from '@apollo/client';

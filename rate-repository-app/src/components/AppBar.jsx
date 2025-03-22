@@ -1,6 +1,9 @@
+import { useApolloClient } from "@apollo/client";
 import Constants from "expo-constants";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { Link } from "react-router-native";
+import { Link, useNavigate } from "react-router-native";
+import useAuthStorage from "../hooks/useAuthStorage";
+import useMe from "../hooks/useMe";
 import theme from "../theme";
 import Text from "./Text";
 
@@ -22,11 +25,28 @@ const styles = StyleSheet.create({
 });
 
 const AppBar = () => {
+  const { user } = useMe();
+  const authStorage = useAuthStorage();
+  const apolloClient = useApolloClient();
+  const navigate = useNavigate();
+
   return (
     <View style={styles.container}>
       <ScrollView horizontal>
         <Tab link="/" title="Repositories" />
-        <Tab link="/signin" title="Sign in" />
+        {!user && <Tab link="/signin" title="Sign in" />}
+        {user && (
+          <Pressable
+            style={styles.link}
+            onPress={() => {
+              authStorage.removeAccessToken();
+              apolloClient.resetStore();
+              navigate("/signin");
+            }}
+          >
+            <Text style={styles.text}>Sign out</Text>
+          </Pressable>
+        )}
       </ScrollView>
     </View>
   );
