@@ -1,6 +1,14 @@
 import { Picker } from "@react-native-picker/picker";
-import { use, useEffect, useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import {
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { useDebounce } from "use-debounce";
 import useRepositories from "../hooks/useRepositories";
 import theme from "../theme";
 import RepositoryItem from "./RepositoryItem";
@@ -21,6 +29,11 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingLeft: 20,
   },
+  search: {
+    backgroundColor: theme.colors.white,
+    padding: 8,
+    margin: 10,
+  },
 });
 
 const ItemSeparator = () => <View style={styles.separator} />;
@@ -28,13 +41,22 @@ const ItemSeparator = () => <View style={styles.separator} />;
 const RepositoryList = () => {
   const [orderBy, setOrderBy] = useState("CREATED_AT");
   const [orderDirection, setOrderDirection] = useState("DESC");
-  const { repositories, loading } = useRepositories(orderBy, orderDirection);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch] = useDebounce(search, 500);
+
+  const { repositories, loading } = useRepositories(
+    orderBy,
+    orderDirection,
+    debouncedSearch
+  );
   return (
     <RepositoryListContainer
       setOrderBy={setOrderBy}
       setOrderDirection={setOrderDirection}
       repositories={repositories}
       loading={loading}
+      setSearch={setSearch}
+      search={search}
     />
   );
 };
@@ -44,8 +66,9 @@ export const RepositoryListContainer = ({
   loading,
   setOrderBy,
   setOrderDirection,
+  setSearch,
+  search,
 }) => {
-  if (loading) return <Text>Loading...</Text>;
   const [pickerActive, setPickerActive] = useState(false);
   const [pickerValue, setPickerValue] = useState("CREATED_AT_DESC");
 
@@ -61,46 +84,71 @@ export const RepositoryListContainer = ({
       renderItem={({ item }) => <RepositoryItem item={item} />}
       ItemSeparatorComponent={ItemSeparator}
       ListHeaderComponent={
-        pickerActive ? (
-          <Picker
-            selectedValue={"CREATED_AT_DESC"}
-            onValueChange={(value) => {
-              setPickerActive(false);
-              setPickerValue(value);
-              setOrderBy(
-                value === "CREATED_AT_DESC" ? "CREATED_AT" : "RATING_AVERAGE"
-              );
-              setOrderDirection(
-                value === "RATING_AVERAGE_ASC" ? "ASC" : "DESC"
-              );
-            }}
-          >
-            <Picker.Item
-              label="Latest repositories"
-              value={"CREATED_AT_DESC"}
-            />
-            <Picker.Item
-              label="Highest rated repositories"
-              value={"RATING_AVERAGE_DESC"}
-            />
-            <Picker.Item
-              label="Lowest rated repositories"
-              value={"RATING_AVERAGE_ASC"}
-            />
-          </Picker>
-        ) : (
-          <Pressable onPress={() => setPickerActive(true)}>
-            <Text style={styles.order}>
-              {pickerValue === "CREATED_AT_DESC"
-                ? "> Latest repositories"
-                : pickerValue === "RATING_AVERAGE_DESC"
-                ? "> Highest rated repositories"
-                : "> Lowest rated repositories"}
-            </Text>
-          </Pressable>
-        )
+        <ListHeader
+          pickerActive={pickerActive}
+          setPickerActive={setPickerActive}
+          pickerValue={pickerValue}
+          setPickerValue={setPickerValue}
+          setOrderBy={setOrderBy}
+          setOrderDirection={setOrderDirection}
+          search={search}
+          setSearch={setSearch}
+        />
       }
     />
+  );
+};
+
+const ListHeader = ({
+  pickerActive,
+  setPickerActive,
+  pickerValue,
+  setPickerValue,
+  setOrderBy,
+  setOrderDirection,
+  search,
+  setSearch,
+}) => {
+  return pickerActive ? (
+    <Picker
+      selectedValue={pickerValue}
+      onValueChange={(value) => {
+        setPickerActive(false);
+        setPickerValue(value);
+        setOrderBy(
+          value === "CREATED_AT_DESC" ? "CREATED_AT" : "RATING_AVERAGE"
+        );
+        setOrderDirection(value === "RATING_AVERAGE_ASC" ? "ASC" : "DESC");
+      }}
+    >
+      <Picker.Item label="Latest repositories" value={"CREATED_AT_DESC"} />
+      <Picker.Item
+        label="Highest rated repositories"
+        value={"RATING_AVERAGE_DESC"}
+      />
+      <Picker.Item
+        label="Lowest rated repositories"
+        value={"RATING_AVERAGE_ASC"}
+      />
+    </Picker>
+  ) : (
+    <>
+      <TextInput
+        style={styles.search}
+        placeholder="Search"
+        onChangeText={(text) => setSearch(text)}
+        value={search}
+      />
+      <Pressable onPress={() => setPickerActive(true)}>
+        <Text style={styles.order}>
+          {pickerValue === "CREATED_AT_DESC"
+            ? "> Latest repositories"
+            : pickerValue === "RATING_AVERAGE_DESC"
+            ? "> Highest rated repositories"
+            : "> Lowest rated repositories"}
+        </Text>
+      </Pressable>
+    </>
   );
 };
 
