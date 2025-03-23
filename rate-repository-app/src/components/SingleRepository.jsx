@@ -93,13 +93,20 @@ const ReviewItem = ({ review }) => (
 
 const SingleRepository = () => {
   const { id } = useParams();
-  const { repository, loading } = useRepository(id);
+  const { repository, loading, fetchMore } = useRepository({
+    repositoryId: id,
+    first: 4,
+  });
   if (loading) return <Text>Loading...</Text>;
 
   const openGitHub = () => {
     Linking.openURL(repository.url);
   };
 
+  const onEndReached = () => {
+    fetchMore();
+  };
+  console.log({ repository });
   return (
     <FlatList
       data={repository.reviews.edges.map((edge) => edge.node)}
@@ -109,6 +116,8 @@ const SingleRepository = () => {
         <RepositoryInfo repository={repository} openGitHub={openGitHub} />
       )}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
+      onEndReached={onEndReached}
+      onEndReachedThreshold={0}
     />
   );
 };

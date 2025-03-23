@@ -45,18 +45,15 @@ const RepositoryList = () => {
   const [debouncedSearch] = useDebounce(search, 500);
 
   const { repositories, fetchMore } = useRepositories({
-    first: 2,
+    first: 4,
     orderBy: orderBy,
     orderDirection: orderDirection,
     debouncedSearch: debouncedSearch,
   });
 
   const onEndReach = () => {
-    console.log("You have reached the end of the list");
     fetchMore();
   };
-
-  console.log({ repositories });
 
   return (
     <RepositoryListContainer
