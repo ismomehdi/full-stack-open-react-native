@@ -44,17 +44,26 @@ const RepositoryList = () => {
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
 
-  const { repositories, loading } = useRepositories(
-    orderBy,
-    orderDirection,
-    debouncedSearch
-  );
+  const { repositories, fetchMore } = useRepositories({
+    first: 2,
+    orderBy: orderBy,
+    orderDirection: orderDirection,
+    debouncedSearch: debouncedSearch,
+  });
+
+  const onEndReach = () => {
+    console.log("You have reached the end of the list");
+    fetchMore();
+  };
+
+  console.log({ repositories });
+
   return (
     <RepositoryListContainer
       setOrderBy={setOrderBy}
       setOrderDirection={setOrderDirection}
       repositories={repositories}
-      loading={loading}
+      onEndReach={onEndReach}
       setSearch={setSearch}
       search={search}
     />
@@ -63,7 +72,7 @@ const RepositoryList = () => {
 
 export const RepositoryListContainer = ({
   repositories,
-  loading,
+  onEndReach,
   setOrderBy,
   setOrderDirection,
   setSearch,
@@ -95,6 +104,8 @@ export const RepositoryListContainer = ({
           setSearch={setSearch}
         />
       }
+      onEndReached={onEndReach}
+      onEndReachedThreshold={0.1}
     />
   );
 };
