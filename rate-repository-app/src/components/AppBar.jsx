@@ -36,16 +36,19 @@ const AppBar = () => {
         <Tab link="/" title="Repositories" />
         {!user && <Tab link="/signin" title="Sign in" />}
         {user && (
-          <Pressable
-            style={styles.link}
-            onPress={() => {
-              authStorage.removeAccessToken();
-              apolloClient.resetStore();
-              navigate("/signin");
-            }}
-          >
-            <Text style={styles.text}>Sign out</Text>
-          </Pressable>
+          <>
+            <Tab link="/review" title="Create a review" />
+            <Pressable
+              style={styles.link}
+              onPress={() => {
+                authStorage.removeAccessToken();
+                apolloClient.resetStore();
+                navigate("/signin");
+              }}
+            >
+              <Text style={styles.text}>Sign out</Text>
+            </Pressable>
+          </>
         )}
       </ScrollView>
     </View>
