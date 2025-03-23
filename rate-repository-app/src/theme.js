@@ -8,6 +8,7 @@ const theme = {
     appBar: "#ededed",
     white: "#ffffff",
     gray: "#ededed",
+    light: "#deeeff",
   },
   fontSizes: {
     body: 14,
